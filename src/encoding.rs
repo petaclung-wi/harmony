@@ -65,7 +65,7 @@ impl FormattingToken {
             FormattingToken::Channel => "<|channel|>",
             FormattingToken::BeginUntrusted => "<|untrusted|>",
             FormattingToken::EndUntrusted => "<|end_untrusted|>",
-            FormattingToken::MetaSep => "<|channel|>",
+            FormattingToken::MetaSep => "<|meta_sep|>",
             FormattingToken::MetaEnd => "<|meta_end|>",
         }
     }
@@ -953,7 +953,7 @@ impl Render<SystemContent> for HarmonyEncoding {
         }
 
         if let Some(channel_config) = &sys.channel_config {
-            if !channel_config.valid_channels.is_empty() {
+            if channel_config.valid_channels.is_empty() == false {
                 let channels_str = channel_config.valid_channels.join(", ");
                 let mut channels_header = format!("# Valid channels: {channels_str}.");
                 if channel_config.channel_required {
@@ -1272,7 +1272,7 @@ impl StreamableParser {
             // SAFETY: we know that there is at least one part remaining, because of is_empty check above
             let last_part = parts.pop().unwrap();
 
-            if let Some(stripped) = last_part.strip_prefix("to=") {
+        if let Some(stripped) = last_part.strip_prefix("to=") {
                 // The header contains a recipient but *no* content-type.
                 recipient = Some(stripped.to_string());
             } else if num_parts == 1 {
